@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { SEED_PLACES } from '../data/seed';
+import { isOpenNow } from '../lib/hours';
 import type { Place, Confirmation, PlaceWithCount, Filters, Action } from '../types';
 
 export function filterPlaces(places: PlaceWithCount[], filters: Filters): PlaceWithCount[] {
@@ -9,6 +10,7 @@ export function filterPlaces(places: PlaceWithCount[], filters: Filters): PlaceW
     if (filters.country && p.country !== filters.country) return false;
     if (filters.type && p.type !== filters.type) return false;
     if (filters.confirmedOnly && p.confirmations.length === 0) return false;
+    if (filters.openNow && isOpenNow(p) !== true) return false;
     if (search && !p.name.toLowerCase().includes(search) && !p.city.toLowerCase().includes(search)) return false;
     return true;
   });

@@ -1,5 +1,6 @@
 import type { PlaceWithCount } from '../types';
 import type { Translations } from '../i18n';
+import { isOpenNow, summarizeHours, is24h } from '../lib/hours';
 
 interface Props {
   place: PlaceWithCount;
@@ -7,8 +8,26 @@ interface Props {
   onConfirm: (place: PlaceWithCount) => void;
 }
 
+function formatSchedule(place: PlaceWithCount, t: Translations): string | null {
+  if (!place.hours) return null;
+  const groups = summarizeHours(place.hours);
+  if (groups.length === 0) return null;
+  return groups
+    .map(({ days, range }) => {
+      const label =
+        days.length === 1
+          ? t.hours.days[days[0]]
+          : `${t.hours.days[days[0]]}–${t.hours.days[days[days.length - 1]]}`;
+      const time = is24h(range) ? t.hours.open24 : `${range[0]}–${range[1]}`;
+      return `${label} ${time}`;
+    })
+    .join(' · ');
+}
+
 export function PlaceCard({ place, t, onConfirm }: Props) {
   const count = place.confirmations.length;
+  const open = isOpenNow(place);
+  const schedule = formatSchedule(place, t);
 
   return (
     <article className="bg-white rounded-2xl p-5 shadow-sm flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
@@ -42,6 +61,27 @@ export function PlaceCard({ place, t, onConfirm }: Props) {
 
       {place.address && (
         <p className="text-sm text-ink/70 leading-snug">{place.address}</p>
+      )}
+
+      {(schedule || open !== null) && (
+        <div className="flex items-center gap-2 flex-wrap text-xs">
+          {open !== null && (
+            <span
+              className={`inline-flex items-center gap-1 font-mono uppercase tracking-wide px-2 py-0.5 rounded-full font-medium ${
+                open ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-emerald-500' : 'bg-stone-400'}`} />
+              {open ? t.hours.openNow : t.hours.closedNow}
+            </span>
+          )}
+          {schedule && (
+            <span className="text-ink/55 flex items-center gap-1">
+              <span aria-hidden="true">🕒</span>
+              {schedule}
+            </span>
+          )}
+        </div>
       )}
 
       <div className="border-t border-dashed border-ink/15 mt-auto" />

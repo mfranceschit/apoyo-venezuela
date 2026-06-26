@@ -6,7 +6,7 @@ export const es = {
     stats: {
       places: 'Lugares listados',
       countries: 'Países',
-      confirmations: 'Confirmaciones',
+      confirmed: 'Lugares confirmados',
     },
     cta: 'Ver lugares',
     add: 'Agregar un lugar',
@@ -23,6 +23,7 @@ export const es = {
     collection: '📦 Centro de acopio',
     volunteering: '🤝 Voluntariado',
     confirmedOnly: '✓ Solo confirmados',
+    openNow: '🕒 Abierto ahora',
     countries: {
       España: 'España',
       Chile: 'Chile',
@@ -63,6 +64,17 @@ export const es = {
       address: 'Calle, número, punto de referencia…',
       url: 'Ej. https://instagram.com/...',
     },
+    hours: {
+      label: 'Horario (opcional)',
+      closed: 'Cerrado',
+      open24: 'Abierto 24 horas',
+    },
+  },
+  hours: {
+    openNow: 'Abierto',
+    closedNow: 'Cerrado',
+    open24: '24 h',
+    days: { mon: 'Lun', tue: 'Mar', wed: 'Mié', thu: 'Jue', fri: 'Vie', sat: 'Sáb', sun: 'Dom' },
   },
   confirmModal: {
     title: 'Confirmar este lugar',

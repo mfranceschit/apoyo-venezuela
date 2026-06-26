@@ -14,7 +14,7 @@ const LANGS: Lang[] = ['es', 'en', 'pt'];
 
 export function App() {
   const [lang, setLang] = useState<Lang>('es');
-  const [filters, setFilters] = useState<Filters>({ country: '', type: '', search: '', confirmedOnly: false });
+  const [filters, setFilters] = useState<Filters>({ country: '', type: '', search: '', confirmedOnly: false, openNow: false });
   const [showAddModal, setShowAddModal] = useState(false);
   const [confirmTarget, setConfirmTarget] = useState<PlaceWithCount | null>(null);
 

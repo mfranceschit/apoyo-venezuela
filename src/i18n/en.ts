@@ -6,7 +6,7 @@ export const en = {
     stats: {
       places: 'Places listed',
       countries: 'Countries',
-      confirmations: 'Confirmations',
+      confirmed: 'Confirmed places',
     },
     cta: 'See locations',
     add: 'Add a location',
@@ -23,6 +23,7 @@ export const en = {
     collection: '📦 Drop-off center',
     volunteering: '🤝 Volunteering',
     confirmedOnly: '✓ Confirmed only',
+    openNow: '🕒 Open now',
     countries: {
       España: 'Spain',
       Chile: 'Chile',
@@ -63,6 +64,17 @@ export const en = {
       address: 'Street, number, landmark…',
       url: 'E.g. https://instagram.com/...',
     },
+    hours: {
+      label: 'Hours (optional)',
+      closed: 'Closed',
+      open24: 'Open 24 hours',
+    },
+  },
+  hours: {
+    openNow: 'Open',
+    closedNow: 'Closed',
+    open24: '24h',
+    days: { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' },
   },
   confirmModal: {
     title: 'Confirm this place',

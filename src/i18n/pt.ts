@@ -6,7 +6,7 @@ export const pt = {
     stats: {
       places: 'Locais listados',
       countries: 'Países',
-      confirmations: 'Confirmações',
+      confirmed: 'Locais confirmados',
     },
     cta: 'Ver locais',
     add: 'Adicionar local',
@@ -23,6 +23,7 @@ export const pt = {
     collection: '📦 Ponto de coleta',
     volunteering: '🤝 Voluntariado',
     confirmedOnly: '✓ Apenas confirmados',
+    openNow: '🕒 Aberto agora',
     countries: {
       España: 'Espanha',
       Chile: 'Chile',
@@ -63,6 +64,17 @@ export const pt = {
       address: 'Rua, número, ponto de referência…',
       url: 'Ex. https://instagram.com/...',
     },
+    hours: {
+      label: 'Horário (opcional)',
+      closed: 'Fechado',
+      open24: 'Aberto 24 horas',
+    },
+  },
+  hours: {
+    openNow: 'Aberto',
+    closedNow: 'Fechado',
+    open24: '24h',
+    days: { mon: 'Seg', tue: 'Ter', wed: 'Qua', thu: 'Qui', fri: 'Sex', sat: 'Sáb', sun: 'Dom' },
   },
   confirmModal: {
     title: 'Confirmar este local',

@@ -69,6 +69,14 @@ export function FilterBar({ filters, onChange, t, countries }: Props) {
         >
           {t.filters.confirmedOnly}
         </button>
+
+        <button
+          aria-pressed={filters.openNow}
+          className={`${chipBase} ${filters.openNow ? activeChip : inactiveChip}`}
+          onClick={() => onChange({ ...filters, openNow: !filters.openNow })}
+        >
+          {t.filters.openNow}
+        </button>
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ interface Props {
 
 export function Hero({ t, places, onAddClick }: Props) {
   const uniqueCountries = new Set(places.map((p) => p.country)).size;
-  const totalConfirmations = places.reduce((sum, p) => sum + p.confirmations.length, 0);
+  const confirmedPlaces = places.filter((p) => p.confirmations.length > 0).length;
 
   return (
     <section
@@ -53,8 +53,8 @@ export function Hero({ t, places, onAddClick }: Props) {
             <p className="text-cream/60 text-sm mt-1">{t.hero.stats.countries}</p>
           </div>
           <div>
-            <p className="font-display text-4xl font-bold text-gold">{totalConfirmations}</p>
-            <p className="text-cream/60 text-sm mt-1">{t.hero.stats.confirmations}</p>
+            <p className="font-display text-4xl font-bold text-gold">{confirmedPlaces}</p>
+            <p className="text-cream/60 text-sm mt-1">{t.hero.stats.confirmed}</p>
           </div>
         </div>
 
