@@ -1,8 +1,6 @@
 import type { Filters, PlaceType } from '../types';
 import type { Translations } from '../i18n';
 
-const COUNTRIES = ['España', 'Chile', 'Argentina', 'Uruguay', 'México'] as const;
-
 const activeChip = 'bg-petroleum text-cream border-petroleum';
 const inactiveChip = 'border border-ink/15 bg-white text-ink hover:border-petroleum/40';
 const chipBase = 'text-sm px-3.5 py-1.5 rounded-full font-medium transition-all cursor-pointer';
@@ -14,9 +12,10 @@ interface Props {
   filters: Filters;
   onChange: (filters: Filters) => void;
   t: Translations;
+  countries: string[];
 }
 
-export function FilterBar({ filters, onChange, t }: Props) {
+export function FilterBar({ filters, onChange, t, countries }: Props) {
   return (
     <div className="flex flex-col gap-3 mb-8">
       <div className="flex items-center gap-3 flex-wrap">
@@ -29,7 +28,7 @@ export function FilterBar({ filters, onChange, t }: Props) {
           onChange={(e) => onChange({ ...filters, country: e.target.value })}
         >
           <option value="">{t.filters.all}</option>
-          {COUNTRIES.map((c) => (
+          {countries.map((c) => (
             <option key={c} value={c}>
               {t.filters.countries[c] ?? c}
             </option>

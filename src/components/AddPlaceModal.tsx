@@ -2,23 +2,22 @@ import { useState } from 'react';
 import type { Place, PlaceType } from '../types';
 import type { Translations } from '../i18n';
 
-const COUNTRIES = ['España', 'Chile', 'Argentina', 'Uruguay', 'México'] as const;
-
 const inputClass =
   'w-full text-base px-3.5 py-2.5 border border-petroleum/20 rounded-lg bg-white text-ink focus:outline-none focus:border-petroleum transition-colors';
 const labelClass = 'font-mono text-[0.7rem] uppercase tracking-[0.1em] text-petroleum';
 
 interface Props {
   t: Translations;
+  countries: string[];
   onClose: () => void;
   onSubmit: (place: Omit<Place, 'id' | 'created_at'>) => Promise<void>;
 }
 
-export function AddPlaceModal({ t, onClose, onSubmit }: Props) {
+export function AddPlaceModal({ t, countries, onClose, onSubmit }: Props) {
   const [name, setName] = useState('');
   const [type, setType] = useState<PlaceType>('collection');
   const [city, setCity] = useState('');
-  const [country, setCountry] = useState('España');
+  const [country, setCountry] = useState(() => countries[0] ?? 'España');
   const [address, setAddress] = useState('');
   const [url, setUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -108,7 +107,7 @@ export function AddPlaceModal({ t, onClose, onSubmit }: Props) {
               value={country}
               onChange={(e) => setCountry(e.target.value)}
             >
-              {COUNTRIES.map((c) => (
+              {countries.map((c) => (
                 <option key={c} value={c}>
                   {t.filters.countries[c] ?? c}
                 </option>

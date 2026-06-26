@@ -7,6 +7,7 @@ import { PlacesGrid } from './components/PlacesGrid';
 import { AddPlaceModal } from './components/AddPlaceModal';
 import { ConfirmModal } from './components/ConfirmModal';
 import { usePlaces } from './hooks/usePlaces';
+import { useCountries } from './hooks/useCountries';
 import { useTranslation } from './hooks/useTranslation';
 
 const LANGS: Lang[] = ['es', 'en', 'pt'];
@@ -19,6 +20,7 @@ export function App() {
 
   const { t } = useTranslation(lang);
   const { places, loading, error, addPlace, addConfirmation } = usePlaces(filters);
+  const countries = useCountries();
 
   return (
     <>
@@ -58,7 +60,7 @@ export function App() {
               </span>
             </div>
 
-            <FilterBar filters={filters} onChange={setFilters} t={t} />
+            <FilterBar filters={filters} onChange={setFilters} t={t} countries={countries} />
 
             {error && (
               <p className="bg-terracotta/10 border border-terracotta text-terracotta px-4 py-3 rounded-lg text-sm mb-5">
@@ -95,6 +97,7 @@ export function App() {
       {showAddModal && (
         <AddPlaceModal
           t={t}
+          countries={countries}
           onClose={() => setShowAddModal(false)}
           onSubmit={async (place) => {
             await addPlace(place);
