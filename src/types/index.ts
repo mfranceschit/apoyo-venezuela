@@ -1,32 +1,34 @@
-export type PlaceType = 'acopio' | 'voluntariado';
+export type PlaceType = 'collection' | 'volunteering';
 
-export type Action = 'dejé donativo' | 'fui voluntario' | 'lo visité y sigue activo';
+export type Action = 'left donation' | 'volunteered' | 'visited and still active';
 
-export type Lang = 'es' | 'en';
+export type Lang = 'es' | 'en' | 'pt';
 
-export interface Lugar {
+export interface Place {
   id: string;
-  nombre: string;
-  tipo: PlaceType;
-  ciudad: string;
-  pais: string;
-  direccion: string | null;
-  creado_en: string;
+  name: string;
+  type: PlaceType;
+  city: string;
+  country: string;
+  address: string | null;
+  url: string | null;
+  created_at: string;
 }
 
-export interface Confirmacion {
+export interface Confirmation {
   id: string;
-  lugar_id: string;
-  accion: Action;
-  cuando: string;
-  creado_en: string;
+  place_id: string;
+  action: Action;
+  when: string;
+  created_at: string;
 }
 
-export interface LugarWithCount extends Lugar {
-  confirmaciones: Confirmacion[];
+export interface PlaceWithCount extends Place {
+  confirmations: Confirmation[];
 }
 
 export interface Filters {
-  pais: string;
-  tipo: PlaceType | '';
+  country: string;
+  type: PlaceType | '';
+  search: string;
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Lugar, PlaceType } from '../types';
+import type { Place, PlaceType } from '../types';
 import type { Translations } from '../i18n';
 
 const COUNTRIES = ['España', 'Chile', 'Argentina', 'Uruguay', 'México'] as const;
@@ -11,28 +11,30 @@ const labelClass = 'font-mono text-[0.7rem] uppercase tracking-[0.1em] text-petr
 interface Props {
   t: Translations;
   onClose: () => void;
-  onSubmit: (place: Omit<Lugar, 'id' | 'creado_en'>) => Promise<void>;
+  onSubmit: (place: Omit<Place, 'id' | 'created_at'>) => Promise<void>;
 }
 
 export function AddPlaceModal({ t, onClose, onSubmit }: Props) {
-  const [nombre, setNombre] = useState('');
-  const [tipo, setTipo] = useState<PlaceType>('acopio');
-  const [ciudad, setCiudad] = useState('');
-  const [pais, setPais] = useState('España');
-  const [direccion, setDireccion] = useState('');
+  const [name, setName] = useState('');
+  const [type, setType] = useState<PlaceType>('collection');
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('España');
+  const [address, setAddress] = useState('');
+  const [url, setUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nombre.trim() || !ciudad.trim()) return;
+    if (!name.trim() || !city.trim()) return;
     setSubmitting(true);
     try {
       await onSubmit({
-        nombre: nombre.trim(),
-        tipo,
-        ciudad: ciudad.trim(),
-        pais,
-        direccion: direccion.trim() || null,
+        name: name.trim(),
+        type,
+        city: city.trim(),
+        country,
+        address: address.trim() || null,
+        url: url.trim() || null,
       });
     } finally {
       setSubmitting(false);
@@ -47,7 +49,7 @@ export function AddPlaceModal({ t, onClose, onSubmit }: Props) {
       }}
     >
       <div
-        className="bg-cream rounded-xl p-8 w-full max-w-lg shadow-xl flex flex-col gap-5"
+        className="bg-cream rounded-xl p-8 w-full max-w-lg shadow-xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto"
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-place-title"
@@ -57,72 +59,85 @@ export function AddPlaceModal({ t, onClose, onSubmit }: Props) {
         </h2>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass} htmlFor="add-nombre">
+            <label className={labelClass} htmlFor="add-name">
               {t.addPlace.name}
             </label>
             <input
-              id="add-nombre"
+              id="add-name"
               className={inputClass}
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder={t.addPlace.placeholder.name}
               required
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass} htmlFor="add-tipo">
+            <label className={labelClass} htmlFor="add-type">
               {t.addPlace.type}
             </label>
             <select
-              id="add-tipo"
+              id="add-type"
               className={inputClass}
-              value={tipo}
-              onChange={(e) => setTipo(e.target.value as PlaceType)}
+              value={type}
+              onChange={(e) => setType(e.target.value as PlaceType)}
             >
-              <option value="acopio">{t.filters.acopio}</option>
-              <option value="voluntariado">{t.filters.voluntariado}</option>
+              <option value="collection">{t.filters.collection}</option>
+              <option value="volunteering">{t.filters.volunteering}</option>
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass} htmlFor="add-ciudad">
+            <label className={labelClass} htmlFor="add-city">
               {t.addPlace.city}
             </label>
             <input
-              id="add-ciudad"
+              id="add-city"
               className={inputClass}
-              value={ciudad}
-              onChange={(e) => setCiudad(e.target.value)}
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
               placeholder={t.addPlace.placeholder.city}
               required
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass} htmlFor="add-pais">
+            <label className={labelClass} htmlFor="add-country">
               {t.addPlace.country}
             </label>
             <select
-              id="add-pais"
+              id="add-country"
               className={inputClass}
-              value={pais}
-              onChange={(e) => setPais(e.target.value)}
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
             >
               {COUNTRIES.map((c) => (
                 <option key={c} value={c}>
-                  {t.filters.countries[c]}
+                  {t.filters.countries[c] ?? c}
                 </option>
               ))}
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass} htmlFor="add-direccion">
+            <label className={labelClass} htmlFor="add-address">
               {t.addPlace.address}
             </label>
             <input
-              id="add-direccion"
+              id="add-address"
               className={inputClass}
-              value={direccion}
-              onChange={(e) => setDireccion(e.target.value)}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
               placeholder={t.addPlace.placeholder.address}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className={labelClass} htmlFor="add-url">
+              {t.addPlace.url}
+            </label>
+            <input
+              id="add-url"
+              type="url"
+              className={inputClass}
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder={t.addPlace.placeholder.url}
             />
           </div>
           <div className="flex gap-3 justify-end mt-1">

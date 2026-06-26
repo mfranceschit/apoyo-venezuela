@@ -1,31 +1,31 @@
 import { useState } from 'react';
-import type { LugarWithCount, Action } from '../types';
+import type { PlaceWithCount, Action } from '../types';
 import type { Translations } from '../i18n';
 
-const ACTIONS: Action[] = ['dejé donativo', 'fui voluntario', 'lo visité y sigue activo'];
+const ACTIONS: Action[] = ['left donation', 'volunteered', 'visited and still active'];
+const WHEN_OPTIONS = ['today', 'yesterday', 'this-week', 'this-month', 'more-than-a-month'] as const;
 
 const inputClass =
   'w-full text-base px-3.5 py-2.5 border border-petroleum/20 rounded-lg bg-white text-ink focus:outline-none focus:border-petroleum transition-colors';
 const labelClass = 'font-mono text-[0.7rem] uppercase tracking-[0.1em] text-petroleum';
 
 interface Props {
-  lugar: LugarWithCount;
+  place: PlaceWithCount;
   t: Translations;
   onClose: () => void;
-  onSubmit: (accion: Action, cuando: string) => Promise<void>;
+  onSubmit: (action: Action, when: string) => Promise<void>;
 }
 
-export function ConfirmModal({ lugar, t, onClose, onSubmit }: Props) {
-  const [accion, setAccion] = useState<Action>('dejé donativo');
-  const [cuando, setCuando] = useState('');
+export function ConfirmModal({ place, t, onClose, onSubmit }: Props) {
+  const [action, setAction] = useState<Action>('left donation');
+  const [when, setWhen] = useState<string>('today');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!cuando.trim()) return;
     setSubmitting(true);
     try {
-      await onSubmit(accion, cuando.trim());
+      await onSubmit(action, when);
     } finally {
       setSubmitting(false);
     }
@@ -49,19 +49,19 @@ export function ConfirmModal({ lugar, t, onClose, onSubmit }: Props) {
             {t.confirmModal.title}
           </h2>
           <p className="text-sm text-ink/65 mt-1">
-            {lugar.nombre} · {lugar.ciudad}
+            {place.name} · {place.city}
           </p>
         </div>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass} htmlFor="confirm-accion">
+            <label className={labelClass} htmlFor="confirm-action">
               {t.confirmModal.action}
             </label>
             <select
-              id="confirm-accion"
+              id="confirm-action"
               className={inputClass}
-              value={accion}
-              onChange={(e) => setAccion(e.target.value as Action)}
+              value={action}
+              onChange={(e) => setAction(e.target.value as Action)}
             >
               {ACTIONS.map((a) => (
                 <option key={a} value={a}>
@@ -71,17 +71,21 @@ export function ConfirmModal({ lugar, t, onClose, onSubmit }: Props) {
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass} htmlFor="confirm-cuando">
+            <label className={labelClass} htmlFor="confirm-when">
               {t.confirmModal.when}
             </label>
-            <input
-              id="confirm-cuando"
+            <select
+              id="confirm-when"
               className={inputClass}
-              value={cuando}
-              onChange={(e) => setCuando(e.target.value)}
-              placeholder={t.confirmModal.whenPlaceholder}
-              required
-            />
+              value={when}
+              onChange={(e) => setWhen(e.target.value)}
+            >
+              {WHEN_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {t.confirmModal.whenOptions[opt]}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex gap-3 justify-end mt-1">
             <button
