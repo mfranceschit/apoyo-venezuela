@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(curl -s -o /dev/null -w \"google: HTTP %{http_code}\\\\n\" --max-time 10 https://www.google.com)",
+      "Bash(echo \"exit curl: $?\")",
+      "Bash(curl -s -o /dev/null -w \"supabase host: HTTP %{http_code}\\\\n\" --max-time 10 https://vualthypnmrmldhvbesj.supabase.co)",
+      "Bash(getent hosts *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
