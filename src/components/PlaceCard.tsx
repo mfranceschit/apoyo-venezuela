@@ -17,30 +17,27 @@ function parseAddress(address: string): { lines: string[]; phone: string | null 
   return { lines, phone };
 }
 
-function formatSchedule(place: PlaceWithCount, t: Translations): string | null {
-  if (!place.hours) return null;
-  const groups = summarizeHours(place.hours);
-  if (groups.length === 0) return null;
-  return groups
-    .map(({ days, range }) => {
-      const label =
-        days.length === 1
-          ? t.hours.days[days[0]]
-          : `${t.hours.days[days[0]]}–${t.hours.days[days[days.length - 1]]}`;
-      const time = is24h(range) ? t.hours.open24 : `${range[0]}–${range[1]}`;
-      return `${label} ${time}`;
-    })
-    .join(' · ');
+function formatScheduleLines(place: PlaceWithCount, t: Translations): string[] {
+  if (!place.hours) return [];
+  return summarizeHours(place.hours).map(({ days, range }) => {
+    const label =
+      days.length === 1
+        ? t.hours.days[days[0]]
+        : `${t.hours.days[days[0]]}–${t.hours.days[days[days.length - 1]]}`;
+    const time = is24h(range) ? t.hours.open24 : `${range[0]}–${range[1]}`;
+    return `${label} ${time}`;
+  });
 }
 
 export function PlaceCard({ place, t, onConfirm }: Props) {
   const count = place.confirmations.length;
   const open = isOpenNow(place);
-  const schedule = formatSchedule(place, t);
+  const scheduleLines = formatScheduleLines(place, t);
+  const schedule = scheduleLines.length > 0;
   const addr = place.address ? parseAddress(place.address) : null;
 
   return (
-    <article className="bg-white rounded-2xl p-5 shadow-sm flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <article className="bg-white rounded-2xl p-5 shadow-sm flex flex-col gap-3 h-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
       <span
         className={`self-start font-mono text-[0.62rem] tracking-[0.1em] uppercase px-2.5 py-1 rounded-full font-medium ${
           place.type === 'collection'
@@ -88,33 +85,38 @@ export function PlaceCard({ place, t, onConfirm }: Props) {
         )}
       </div>
 
-      {schedule && (
-        <div className="rounded-xl border border-petroleum/10 bg-petroleum/[0.035] px-3 py-2.5 flex flex-col gap-1.5">
-          <div className="flex items-center justify-between gap-2">
-            <span className="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-petroleum/55">
-              {t.hours.title}
-            </span>
-            {open !== null && (
-              <span
-                className={`inline-flex items-center gap-1 font-mono text-[0.6rem] uppercase tracking-wide px-2 py-0.5 rounded-full font-medium ${
-                  open ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
-                }`}
-              >
-                <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-emerald-500' : 'bg-stone-400'}`} />
-                {open ? t.hours.openNow : t.hours.closedNow}
+      <div className="mt-auto flex flex-col gap-3">
+        {schedule && (
+          <div className="rounded-xl border border-petroleum/10 bg-petroleum/[0.035] px-3 py-2.5 flex flex-col gap-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-petroleum/55">
+                {t.hours.title}
               </span>
-            )}
+              {open !== null && (
+                <span
+                  className={`inline-flex items-center gap-1 font-mono text-[0.6rem] uppercase tracking-wide px-2 py-0.5 rounded-full font-medium ${
+                    open ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-emerald-500' : 'bg-stone-400'}`} />
+                  {open ? t.hours.openNow : t.hours.closedNow}
+                </span>
+              )}
+            </div>
+            <div className="flex items-start gap-1.5 min-h-[2.5rem]">
+              <span aria-hidden="true" className="text-petroleum/50 leading-snug">🕒</span>
+              <div className="flex flex-col">
+                {scheduleLines.map((line, i) => (
+                  <span key={i} className="text-sm text-ink/75 leading-snug">{line}</span>
+                ))}
+              </div>
+            </div>
           </div>
-          <p className="text-sm text-ink/75 leading-snug flex items-start gap-1.5">
-            <span aria-hidden="true" className="text-petroleum/50">🕒</span>
-            <span>{schedule}</span>
-          </p>
-        </div>
-      )}
+        )}
 
-      <div className="border-t border-dashed border-ink/15 mt-auto" />
+        <div className="border-t border-dashed border-ink/15" />
 
-      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
         {count > 0 ? (
           <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm ring-2 ring-emerald-500/25">
             <span className="text-base font-bold leading-none">✓</span>
@@ -142,6 +144,7 @@ export function PlaceCard({ place, t, onConfirm }: Props) {
         >
           {t.card.confirm}
         </button>
+        </div>
       </div>
     </article>
   );
