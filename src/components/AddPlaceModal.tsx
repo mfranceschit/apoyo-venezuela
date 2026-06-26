@@ -75,7 +75,7 @@ export function AddPlaceModal({ t, countries, onClose, onSubmit }: Props) {
       }}
     >
       <div
-        className="bg-cream rounded-xl p-8 w-full max-w-lg shadow-xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto"
+        className="bg-cream rounded-xl p-8 w-full max-w-lg shadow-xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto no-scrollbar"
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-place-title"
