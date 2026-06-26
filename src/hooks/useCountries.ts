@@ -1,7 +1,34 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 
-const FALLBACK_COUNTRIES = ['España', 'Chile', 'Argentina', 'Uruguay', 'México', 'Venezuela', 'Colombia', 'Perú', 'Estados Unidos'];
+const FALLBACK_COUNTRIES = [
+  'Alemania',
+  'Argentina',
+  'Bélgica',
+  'Bolivia',
+  'Brasil',
+  'Canadá',
+  'Chile',
+  'Colombia',
+  'Ecuador',
+  'España',
+  'Estados Unidos',
+  'Francia',
+  'Grecia',
+  'Guatemala',
+  'Honduras',
+  'Italia',
+  'México',
+  'Países Bajos',
+  'Perú',
+  'Polonia',
+  'Portugal',
+  'Reino Unido',
+  'República Dominicana',
+  'Suecia',
+  'Uruguay',
+  'Venezuela',
+];
 
 async function fetchCountries(): Promise<string[]> {
   const { data, error } = await supabase
