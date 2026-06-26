@@ -31,4 +31,5 @@ export interface Filters {
   country: string;
   type: PlaceType | '';
   search: string;
+  confirmedOnly: boolean;
 }

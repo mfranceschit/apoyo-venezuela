@@ -60,6 +60,16 @@ export function FilterBar({ filters, onChange, t }: Props) {
             {t.filters[type]}
           </button>
         ))}
+
+        <span className="mx-1 h-5 w-px bg-ink/15" aria-hidden="true" />
+
+        <button
+          aria-pressed={filters.confirmedOnly}
+          className={`${chipBase} ${filters.confirmedOnly ? activeChip : inactiveChip}`}
+          onClick={() => onChange({ ...filters, confirmedOnly: !filters.confirmedOnly })}
+        >
+          {t.filters.confirmedOnly}
+        </button>
       </div>
     </div>
   );

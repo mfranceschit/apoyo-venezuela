@@ -22,6 +22,7 @@ export const en = {
     searchPlaceholder: 'Search city or place…',
     collection: '📦 Drop-off center',
     volunteering: '🤝 Volunteering',
+    confirmedOnly: '✓ Confirmed only',
     countries: {
       España: 'Spain',
       Chile: 'Chile',

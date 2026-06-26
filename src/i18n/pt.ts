@@ -22,6 +22,7 @@ export const pt = {
     searchPlaceholder: 'Buscar cidade ou local…',
     collection: '📦 Ponto de coleta',
     volunteering: '🤝 Voluntariado',
+    confirmedOnly: '✓ Apenas confirmados',
     countries: {
       España: 'Espanha',
       Chile: 'Chile',

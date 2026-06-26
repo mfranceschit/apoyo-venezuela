@@ -22,6 +22,7 @@ export const es = {
     searchPlaceholder: 'Buscar ciudad o lugar…',
     collection: '📦 Centro de acopio',
     volunteering: '🤝 Voluntariado',
+    confirmedOnly: '✓ Solo confirmados',
     countries: {
       España: 'España',
       Chile: 'Chile',

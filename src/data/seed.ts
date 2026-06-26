@@ -166,4 +166,28 @@ export const SEED_PLACES: PlaceWithCount[] = [
     created_at: '2026-06-24T00:00:00Z',
     confirmations: [],
   },
+  {
+    id: 'seed-16',
+    name: 'E&M Odontología — Las Condes',
+    type: 'collection',
+    city: 'Santiago',
+    country: 'Chile',
+    address:
+      'Av. Apoquindo 4100, of. 512, E&M Odontología, Las Condes · Lun–Vie 08:00–20:00, Sáb–Dom 10:00–18:00 · +56 9 3121 6179',
+    url: null,
+    created_at: '2026-06-26T00:00:00Z',
+    confirmations: [],
+  },
+  {
+    id: 'seed-17',
+    name: 'Galería Sur Metro Escuela Militar — Local 175',
+    type: 'collection',
+    city: 'Santiago',
+    country: 'Chile',
+    address:
+      'Av. Apoquindo 4411, galería sur del subcentro Metro Escuela Militar, local 175, Las Condes · Disponible 24 horas · +56 9 7538 2342',
+    url: null,
+    created_at: '2026-06-26T00:00:00Z',
+    confirmations: [],
+  },
 ];

@@ -8,6 +8,7 @@ export function filterPlaces(places: PlaceWithCount[], filters: Filters): PlaceW
   return places.filter((p) => {
     if (filters.country && p.country !== filters.country) return false;
     if (filters.type && p.type !== filters.type) return false;
+    if (filters.confirmedOnly && p.confirmations.length === 0) return false;
     if (search && !p.name.toLowerCase().includes(search) && !p.city.toLowerCase().includes(search)) return false;
     return true;
   });

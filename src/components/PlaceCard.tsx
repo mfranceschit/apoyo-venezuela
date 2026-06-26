@@ -48,8 +48,8 @@ export function PlaceCard({ place, t, onConfirm }: Props) {
 
       <div className="flex items-center gap-3">
         {count > 0 ? (
-          <div className="w-10 h-10 rounded-full border-2 border-petroleum text-petroleum flex items-center justify-center shrink-0">
-            <span className="text-sm font-bold">✓</span>
+          <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm ring-2 ring-emerald-500/25">
+            <span className="text-base font-bold leading-none">✓</span>
           </div>
         ) : (
           <div className="w-10 h-10 rounded-full border-2 border-dashed border-ink/25 text-ink/35 flex items-center justify-center shrink-0">
@@ -59,7 +59,7 @@ export function PlaceCard({ place, t, onConfirm }: Props) {
 
         <div className="flex-1 min-w-0">
           {count > 0 ? (
-            <p className="text-sm font-bold text-ink leading-tight">{t.card.confirmed(count)}</p>
+            <p className="text-sm font-bold text-emerald-700 leading-tight">{t.card.confirmed(count)}</p>
           ) : (
             <>
               <p className="text-sm font-bold text-ink leading-tight">{t.card.unconfirmed}</p>
