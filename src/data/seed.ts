@@ -7,7 +7,7 @@ export const SEED_PLACES: PlaceWithCount[] = [
     type: 'collection',
     city: 'Madrid',
     country: 'España',
-    address: 'Planta 0, Sambil Madrid · Recogida sáb 27 y dom 28 jun, 10:00–18:30',
+    address: 'Planta 0, Sambil Madrid',
     url: 'https://instagram.com/sambilmadrid',
     hours: { sat: ['10:00', '18:30'], sun: ['10:00', '18:30'] },
     created_at: '2026-06-24T00:00:00Z',
@@ -110,7 +110,7 @@ export const SEED_PLACES: PlaceWithCount[] = [
     type: 'collection',
     city: 'Buenos Aires',
     country: 'Argentina',
-    address: 'Amenábar 1024, Colegiales · 13:00–19:00',
+    address: 'Amenábar 1024, Colegiales',
     url: 'https://instagram.com/acopiocolegiales',
     hours: {
       mon: ['13:00', '19:00'],
@@ -130,7 +130,7 @@ export const SEED_PLACES: PlaceWithCount[] = [
     type: 'collection',
     city: 'Buenos Aires',
     country: 'Argentina',
-    address: 'Libertad 996, Retiro · 10:00–21:00',
+    address: 'Libertad 996, Retiro',
     url: 'https://facebook.com/acopioretiro',
     hours: {
       mon: ['10:00', '21:00'],
@@ -211,7 +211,7 @@ export const SEED_PLACES: PlaceWithCount[] = [
     city: 'Santiago',
     country: 'Chile',
     address:
-      'Av. Apoquindo 4100, of. 512, E&M Odontología, Las Condes · Lun–Vie 08:00–20:00, Sáb–Dom 10:00–18:00 · +56 9 3121 6179',
+      'Av. Apoquindo 4100, of. 512, E&M Odontología, Las Condes · +56 9 3121 6179',
     url: null,
     hours: {
       mon: ['08:00', '20:00'],
@@ -232,7 +232,7 @@ export const SEED_PLACES: PlaceWithCount[] = [
     city: 'Santiago',
     country: 'Chile',
     address:
-      'Av. Apoquindo 4411, galería sur del subcentro Metro Escuela Militar, local 175, Las Condes · Disponible 24 horas · +56 9 7538 2342',
+      'Av. Apoquindo 4411, galería sur del subcentro Metro Escuela Militar, local 175, Las Condes · +56 9 7538 2342',
     url: null,
     hours: {
       mon: ['00:00', '24:00'],

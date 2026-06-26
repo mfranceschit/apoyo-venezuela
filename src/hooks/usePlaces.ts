@@ -4,14 +4,25 @@ import { SEED_PLACES } from '../data/seed';
 import { isOpenNow } from '../lib/hours';
 import type { Place, Confirmation, PlaceWithCount, Filters, Action } from '../types';
 
+/** Lowercase and strip accents so "espana" matches "España". */
+function normalize(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
 export function filterPlaces(places: PlaceWithCount[], filters: Filters): PlaceWithCount[] {
-  const search = filters.search.trim().toLowerCase();
+  const search = normalize(filters.search.trim());
   return places.filter((p) => {
     if (filters.country && p.country !== filters.country) return false;
     if (filters.type && p.type !== filters.type) return false;
     if (filters.confirmedOnly && p.confirmations.length === 0) return false;
     if (filters.openNow && isOpenNow(p) !== true) return false;
-    if (search && !p.name.toLowerCase().includes(search) && !p.city.toLowerCase().includes(search)) return false;
+    if (search) {
+      const haystack = normalize(`${p.name} ${p.city} ${p.country} ${p.address ?? ''}`);
+      if (!haystack.includes(search)) return false;
+    }
     return true;
   });
 }

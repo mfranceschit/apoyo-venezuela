@@ -8,6 +8,15 @@ interface Props {
   onConfirm: (place: PlaceWithCount) => void;
 }
 
+/** Split a free-text address into a main line, extra lines, and a phone number. */
+function parseAddress(address: string): { lines: string[]; phone: string | null } {
+  const segments = address.split(/\s*·\s*/).map((s) => s.trim()).filter(Boolean);
+  const isPhone = (s: string) => /^\+?\d[\d\s().-]{5,}$/.test(s);
+  const phone = segments.find(isPhone) ?? null;
+  const lines = segments.filter((s) => s !== phone);
+  return { lines, phone };
+}
+
 function formatSchedule(place: PlaceWithCount, t: Translations): string | null {
   if (!place.hours) return null;
   const groups = summarizeHours(place.hours);
@@ -28,6 +37,7 @@ export function PlaceCard({ place, t, onConfirm }: Props) {
   const count = place.confirmations.length;
   const open = isOpenNow(place);
   const schedule = formatSchedule(place, t);
+  const addr = place.address ? parseAddress(place.address) : null;
 
   return (
     <article className="bg-white rounded-2xl p-5 shadow-sm flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
@@ -54,33 +64,51 @@ export function PlaceCard({ place, t, onConfirm }: Props) {
         <h3 className="font-display text-xl font-bold text-ink leading-tight">{place.name}</h3>
       )}
 
-      <p className="text-sm text-ink/55 flex items-center gap-1 -mt-1">
-        <span className="text-terracotta text-xs">📍</span>
-        {place.city}, {place.country}
-      </p>
+      <div className="flex flex-col gap-1 -mt-1">
+        <p className="text-sm font-medium text-ink/65 flex items-center gap-1.5">
+          <span className="text-terracotta text-xs" aria-hidden="true">📍</span>
+          {place.city}, {place.country}
+        </p>
 
-      {place.address && (
-        <p className="text-sm text-ink/70 leading-snug">{place.address}</p>
-      )}
+        {addr?.lines[0] && (
+          <p className="text-sm text-ink/70 leading-snug">{addr.lines[0]}</p>
+        )}
+        {addr?.lines.slice(1).map((line, i) => (
+          <p key={i} className="text-xs text-ink/45 leading-snug">{line}</p>
+        ))}
 
-      {(schedule || open !== null) && (
-        <div className="flex items-center gap-2 flex-wrap text-xs">
-          {open !== null && (
-            <span
-              className={`inline-flex items-center gap-1 font-mono uppercase tracking-wide px-2 py-0.5 rounded-full font-medium ${
-                open ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
-              }`}
-            >
-              <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-emerald-500' : 'bg-stone-400'}`} />
-              {open ? t.hours.openNow : t.hours.closedNow}
+        {addr?.phone && (
+          <a
+            href={`tel:${addr.phone.replace(/[^\d+]/g, '')}`}
+            className="text-sm text-petroleum hover:underline flex items-center gap-1.5 w-fit"
+          >
+            <span aria-hidden="true">📞</span>
+            {addr.phone}
+          </a>
+        )}
+      </div>
+
+      {schedule && (
+        <div className="rounded-xl border border-petroleum/10 bg-petroleum/[0.035] px-3 py-2.5 flex flex-col gap-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-mono text-[0.6rem] uppercase tracking-[0.12em] text-petroleum/55">
+              {t.hours.title}
             </span>
-          )}
-          {schedule && (
-            <span className="text-ink/55 flex items-center gap-1">
-              <span aria-hidden="true">🕒</span>
-              {schedule}
-            </span>
-          )}
+            {open !== null && (
+              <span
+                className={`inline-flex items-center gap-1 font-mono text-[0.6rem] uppercase tracking-wide px-2 py-0.5 rounded-full font-medium ${
+                  open ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-emerald-500' : 'bg-stone-400'}`} />
+                {open ? t.hours.openNow : t.hours.closedNow}
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-ink/75 leading-snug flex items-start gap-1.5">
+            <span aria-hidden="true" className="text-petroleum/50">🕒</span>
+            <span>{schedule}</span>
+          </p>
         </div>
       )}
 

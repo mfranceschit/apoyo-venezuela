@@ -92,6 +92,7 @@ export const es = {
     },
   },
   hours: {
+    title: 'Horario',
     openNow: 'Abierto',
     closedNow: 'Cerrado',
     open24: '24 h',

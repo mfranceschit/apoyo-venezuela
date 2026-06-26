@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Place, PlaceType, DayKey, Hours } from '../types';
 import type { Translations } from '../i18n';
 import { DAY_ORDER } from '../lib/hours';
+import { Select } from './Select';
 
 const inputClass =
   'w-full text-base px-3.5 py-2.5 border border-petroleum/20 rounded-lg bg-white text-ink focus:outline-none focus:border-petroleum transition-colors';
@@ -100,15 +101,15 @@ export function AddPlaceModal({ t, countries, onClose, onSubmit }: Props) {
             <label className={labelClass} htmlFor="add-type">
               {t.addPlace.type}
             </label>
-            <select
+            <Select
               id="add-type"
-              className={inputClass}
               value={type}
-              onChange={(e) => setType(e.target.value as PlaceType)}
-            >
-              <option value="collection">{t.filters.collection}</option>
-              <option value="volunteering">{t.filters.volunteering}</option>
-            </select>
+              onChange={(v) => setType(v as PlaceType)}
+              options={[
+                { value: 'collection', label: t.filters.collection },
+                { value: 'volunteering', label: t.filters.volunteering },
+              ]}
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className={labelClass} htmlFor="add-city">
@@ -127,18 +128,12 @@ export function AddPlaceModal({ t, countries, onClose, onSubmit }: Props) {
             <label className={labelClass} htmlFor="add-country">
               {t.addPlace.country}
             </label>
-            <select
+            <Select
               id="add-country"
-              className={inputClass}
               value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            >
-              {countries.map((c) => (
-                <option key={c} value={c}>
-                  {t.filters.countries[c] ?? c}
-                </option>
-              ))}
-            </select>
+              onChange={setCountry}
+              options={countries.map((c) => ({ value: c, label: t.filters.countries[c] ?? c }))}
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className={labelClass} htmlFor="add-address">

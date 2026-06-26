@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import type { PlaceWithCount, Action } from '../types';
 import type { Translations } from '../i18n';
+import { Select } from './Select';
 
 const ACTIONS: Action[] = ['left donation', 'volunteered', 'visited and still active'];
 const WHEN_OPTIONS = ['today', 'yesterday', 'this-week', 'this-month', 'more-than-a-month'] as const;
 
-const inputClass =
-  'w-full text-base px-3.5 py-2.5 border border-petroleum/20 rounded-lg bg-white text-ink focus:outline-none focus:border-petroleum transition-colors';
 const labelClass = 'font-mono text-[0.7rem] uppercase tracking-[0.1em] text-petroleum';
 
 interface Props {
@@ -57,35 +56,23 @@ export function ConfirmModal({ place, t, onClose, onSubmit }: Props) {
             <label className={labelClass} htmlFor="confirm-action">
               {t.confirmModal.action}
             </label>
-            <select
+            <Select
               id="confirm-action"
-              className={inputClass}
               value={action}
-              onChange={(e) => setAction(e.target.value as Action)}
-            >
-              {ACTIONS.map((a) => (
-                <option key={a} value={a}>
-                  {t.confirmModal.actions[a]}
-                </option>
-              ))}
-            </select>
+              onChange={(v) => setAction(v as Action)}
+              options={ACTIONS.map((a) => ({ value: a, label: t.confirmModal.actions[a] }))}
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className={labelClass} htmlFor="confirm-when">
               {t.confirmModal.when}
             </label>
-            <select
+            <Select
               id="confirm-when"
-              className={inputClass}
               value={when}
-              onChange={(e) => setWhen(e.target.value)}
-            >
-              {WHEN_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>
-                  {t.confirmModal.whenOptions[opt]}
-                </option>
-              ))}
-            </select>
+              onChange={setWhen}
+              options={WHEN_OPTIONS.map((opt) => ({ value: opt, label: t.confirmModal.whenOptions[opt] }))}
+            />
           </div>
           <div className="flex gap-3 justify-end mt-1">
             <button

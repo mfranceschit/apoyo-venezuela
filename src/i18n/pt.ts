@@ -92,6 +92,7 @@ export const pt = {
     },
   },
   hours: {
+    title: 'Horário',
     openNow: 'Aberto',
     closedNow: 'Fechado',
     open24: '24h',

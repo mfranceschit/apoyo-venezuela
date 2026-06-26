@@ -92,6 +92,7 @@ export const en = {
     },
   },
   hours: {
+    title: 'Hours',
     openNow: 'Open',
     closedNow: 'Closed',
     open24: '24h',

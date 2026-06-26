@@ -8,7 +8,14 @@
       "Bash(curl -s -o /dev/null -w \"supabase host: HTTP %{http_code}\\\\n\" --max-time 10 https://vualthypnmrmldhvbesj.supabase.co)",
       "Bash(getent hosts *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(python3 -m json.tool)",
+      "WebSearch",
+      "Bash(cd *)",
+      "Bash(git fetch *)",
+      "Bash(git rev-list *)",
+      "Bash(awk '{print \"remoto adelante:\", $1, \"| local adelante:\", $2}')",
+      "Bash(node *)"
     ]
   }
 }

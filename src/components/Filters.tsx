@@ -1,12 +1,10 @@
 import type { Filters, PlaceType } from '../types';
 import type { Translations } from '../i18n';
+import { Select } from './Select';
 
 const activeChip = 'bg-petroleum text-cream border-petroleum';
 const inactiveChip = 'border border-ink/15 bg-white text-ink hover:border-petroleum/40';
 const chipBase = 'text-sm px-3.5 py-1.5 rounded-full font-medium transition-all cursor-pointer';
-
-const selectClass =
-  'text-sm px-3 py-2 border border-ink/15 rounded-lg bg-white text-ink focus:outline-none focus:border-petroleum transition-colors';
 
 interface Props {
   filters: Filters;
@@ -16,24 +14,24 @@ interface Props {
 }
 
 export function FilterBar({ filters, onChange, t, countries }: Props) {
+  const countryOptions = [
+    { value: '', label: t.filters.all },
+    ...countries.map((c) => ({ value: c, label: t.filters.countries[c] ?? c })),
+  ];
+
   return (
     <div className="flex flex-col gap-3 mb-8">
       <div className="flex items-center gap-3 flex-wrap">
         <span className="font-mono text-[0.7rem] uppercase tracking-[0.1em] text-petroleum/65">
           {t.filters.country}
         </span>
-        <select
-          className={selectClass}
+        <Select
+          className="w-48"
+          ariaLabel={t.filters.country}
           value={filters.country}
-          onChange={(e) => onChange({ ...filters, country: e.target.value })}
-        >
-          <option value="">{t.filters.all}</option>
-          {countries.map((c) => (
-            <option key={c} value={c}>
-              {t.filters.countries[c] ?? c}
-            </option>
-          ))}
-        </select>
+          onChange={(country) => onChange({ ...filters, country })}
+          options={countryOptions}
+        />
         <input
           type="search"
           className="flex-1 min-w-[180px] text-sm px-3 py-2 border border-ink/15 rounded-lg bg-white text-ink placeholder:text-ink/40 focus:outline-none focus:border-petroleum transition-colors"
