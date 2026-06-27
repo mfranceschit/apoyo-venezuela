@@ -3,6 +3,7 @@ import type { Place, PlaceType, DayKey, Hours } from '../types';
 import type { Translations } from '../i18n';
 import { DAY_ORDER } from '../lib/hours';
 import { Select } from './Select';
+import { ComboBox } from './ComboBox';
 
 const inputClass =
   'w-full text-base px-3.5 py-2.5 border border-petroleum/20 rounded-lg bg-white text-ink focus:outline-none focus:border-petroleum transition-colors';
@@ -132,7 +133,7 @@ export function AddPlaceModal({ t, countries, onClose, onSubmit }: Props) {
             <label className={labelClass} htmlFor="add-country">
               {t.addPlace.country}
             </label>
-            <Select
+            <ComboBox
               id="add-country"
               value={country}
               onChange={setCountry}
