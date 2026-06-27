@@ -1,6 +1,6 @@
 import type { Filters, PlaceType } from '../types';
 import type { Translations } from '../i18n';
-import { Select } from './Select';
+import { ComboBox } from './ComboBox';
 
 const activeChip = 'bg-petroleum text-cream border-petroleum';
 const inactiveChip = 'border border-ink/15 bg-white text-ink hover:border-petroleum/40';
@@ -25,7 +25,7 @@ export function FilterBar({ filters, onChange, t, countries }: Props) {
         <span className="font-mono text-[0.7rem] uppercase tracking-[0.1em] text-petroleum/65">
           {t.filters.country}
         </span>
-        <Select
+        <ComboBox
           className="w-48"
           ariaLabel={t.filters.country}
           value={filters.country}
