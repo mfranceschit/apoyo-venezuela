@@ -59,6 +59,7 @@ export const pt = {
     unconfirmed: 'Sem confirmação',
     unconfirmedHint: 'seja o primeiro',
     confirm: 'Confirmar',
+    remove: 'Denunciar',
   },
   section: {
     title: 'Locais',

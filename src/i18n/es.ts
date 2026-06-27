@@ -59,6 +59,7 @@ export const es = {
     unconfirmed: 'Sin confirmar',
     unconfirmedHint: 'sé el primero',
     confirm: 'Confirmar',
+    remove: 'Dar de baja',
   },
   section: {
     title: 'Lugares',

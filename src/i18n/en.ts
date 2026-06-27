@@ -59,6 +59,7 @@ export const en = {
     unconfirmed: 'Unconfirmed',
     unconfirmedHint: 'be the first',
     confirm: 'Confirm',
+    remove: 'Report',
   },
   section: {
     title: 'Places',
