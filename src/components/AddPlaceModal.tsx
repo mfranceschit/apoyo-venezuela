@@ -31,7 +31,7 @@ interface Props {
   t: Translations;
   countries: string[];
   onClose: () => void;
-  onSubmit: (place: Omit<Place, 'id' | 'created_at'>) => Promise<void>;
+  onSubmit: (place: Omit<Place, 'id' | 'created_at' | 'timezone'>) => Promise<void>;
 }
 
 export function AddPlaceModal({ t, countries, onClose, onSubmit }: Props) {

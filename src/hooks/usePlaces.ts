@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { SEED_PLACES } from '../data/seed';
 import { isOpenNow } from '../lib/hours';
-import type { Place, Confirmation, PlaceWithCount, Filters, Action } from '../types';
+import type { Place, Confirmation, PlaceWithCount, Filters, Action, CountryInfo } from '../types';
 
 /** Lowercase and strip accents so "espana" matches "España". */
 function normalize(text: string): string {
@@ -30,7 +30,7 @@ export function filterPlaces(places: PlaceWithCount[], filters: Filters): PlaceW
 async function fetchAllPlaces(): Promise<PlaceWithCount[]> {
   const { data: places, error: placesError } = await supabase
     .from('places')
-    .select('*')
+    .select('*, countries(timezone)')
     .order('created_at', { ascending: false });
   if (placesError) throw placesError;
 
@@ -41,6 +41,7 @@ async function fetchAllPlaces(): Promise<PlaceWithCount[]> {
 
   return (places ?? []).map((place) => ({
     ...place,
+    timezone: (place as { countries?: { timezone?: string | null } }).countries?.timezone ?? null,
     confirmations: (confirmations ?? []).filter(
       (c: Confirmation) => c.place_id === place.id,
     ),
@@ -51,7 +52,7 @@ interface UsePlacesResult {
   places: PlaceWithCount[];
   loading: boolean;
   error: string | null;
-  addPlace: (place: Omit<Place, 'id' | 'created_at'>) => Promise<void>;
+  addPlace: (place: Omit<Place, 'id' | 'created_at' | 'timezone'>) => Promise<void>;
   addConfirmation: (placeId: string, action: Action, when: string) => Promise<void>;
 }
 
@@ -65,7 +66,7 @@ export function usePlaces(filters: Filters): UsePlacesResult {
   });
 
   const addPlaceMutation = useMutation({
-    mutationFn: async (place: Omit<Place, 'id' | 'created_at'>) => {
+    mutationFn: async (place: Omit<Place, 'id' | 'created_at' | 'timezone'>) => {
       const { data: row, error } = await supabase
         .from('places')
         .insert(place)
@@ -75,8 +76,10 @@ export function usePlaces(filters: Filters): UsePlacesResult {
       return row as Place;
     },
     onSuccess: (newPlace) => {
+      const countries = queryClient.getQueryData<CountryInfo[]>(['countries']) ?? [];
+      const timezone = countries.find((c) => c.code === newPlace.country)?.timezone ?? null;
       queryClient.setQueryData<PlaceWithCount[]>(['places'], (prev = []) => [
-        { ...newPlace, confirmations: [] },
+        { ...newPlace, timezone, confirmations: [] },
         ...prev,
       ]);
     },

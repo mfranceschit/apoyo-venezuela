@@ -2,32 +2,6 @@ import type { DayKey, DayRange, Hours, Place } from '../types';
 
 export const DAY_ORDER: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
-/**
- * Country (as stored in the DB) -> IANA timezone. "Open now" must be evaluated
- * in each place's local time, not the visitor's browser time.
- */
-const COUNTRY_TZ: Record<string, string> = {
-  España: 'Europe/Madrid',
-  Chile: 'America/Santiago',
-  Argentina: 'America/Argentina/Buenos_Aires',
-  Uruguay: 'America/Montevideo',
-  México: 'America/Mexico_City',
-  Colombia: 'America/Bogota',
-  Venezuela: 'America/Caracas',
-  Perú: 'America/Lima',
-  Ecuador: 'America/Guayaquil',
-  Brasil: 'America/Sao_Paulo',
-  Panamá: 'America/Panama',
-  'Estados Unidos': 'America/New_York',
-};
-
-/** Fallback when a country has no explicit mapping. */
-const DEFAULT_TZ = 'America/Caracas';
-
-export function timezoneFor(country: string): string {
-  return COUNTRY_TZ[country] ?? DEFAULT_TZ;
-}
-
 const WEEKDAY_TO_KEY: Record<string, DayKey> = {
   Mon: 'mon',
   Tue: 'tue',
@@ -53,7 +27,7 @@ function localParts(tz: string, now: Date): { day: DayKey; minutes: number } {
   const minute = parts.find((p) => p.type === 'minute')?.value ?? '00';
 
   let h = parseInt(hour, 10);
-  if (h === 24) h = 0; // some engines emit 24 for midnight under h23
+  if (h === 24) h = 0;
   return { day: WEEKDAY_TO_KEY[weekday] ?? 'mon', minutes: h * 60 + parseInt(minute, 10) };
 }
 
@@ -67,17 +41,17 @@ export function isRangeOpen(range: DayRange, minutes: number): boolean {
   const open = toMinutes(range[0]);
   const close = toMinutes(range[1]);
   if (close > open) return minutes >= open && minutes < close;
-  // Overnight range (e.g. 22:00–02:00): open if before close OR after open.
   return minutes >= open || minutes < close;
 }
 
 /**
  * Is the place open right now in its local timezone?
- * Returns null when the place has no structured hours (we can't claim it's open).
+ * Returns null when hours or timezone are missing (can't determine open/closed).
  */
 export function isOpenNow(place: Place, now: Date = new Date()): boolean | null {
   if (!place.hours || Object.keys(place.hours).length === 0) return null;
-  const { day, minutes } = localParts(timezoneFor(place.country), now);
+  if (!place.timezone) return null;
+  const { day, minutes } = localParts(place.timezone, now);
   const range = place.hours[day];
   if (!range) return false;
   return isRangeOpen(range, minutes);
@@ -101,4 +75,16 @@ export function summarizeHours(hours: Hours): { days: DayKey[]; range: DayRange 
 
 export function is24h(range: DayRange): boolean {
   return toMinutes(range[0]) === 0 && toMinutes(range[1]) >= 1440;
+}
+
+/** Converts an IANA timezone string to a human-readable Spanish label. */
+export function formatTimezone(tz: string): string {
+  return (
+    new Intl.DateTimeFormat('es', {
+      timeZoneName: 'longGeneric',
+      timeZone: tz,
+    })
+      .formatToParts(new Date())
+      .find((p) => p.type === 'timeZoneName')?.value ?? tz
+  );
 }
