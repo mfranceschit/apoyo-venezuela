@@ -21,7 +21,13 @@ export interface Place {
   address: string | null;
   url: string | null;
   hours: Hours | null;
+  timezone: string | null;
   created_at: string;
+}
+
+export interface CountryInfo {
+  code: string;
+  timezone: string | null;
 }
 
 export interface Confirmation {
