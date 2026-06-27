@@ -6,6 +6,7 @@ import { FilterBar } from './components/Filters';
 import { PlacesGrid } from './components/PlacesGrid';
 import { AddPlaceModal } from './components/AddPlaceModal';
 import { ConfirmModal } from './components/ConfirmModal';
+import { RemovePlaceModal } from './components/RemovePlaceModal';
 import { usePlaces } from './hooks/usePlaces';
 import { useCountries } from './hooks/useCountries';
 import { useTranslation } from './hooks/useTranslation';
@@ -18,9 +19,10 @@ export function App() {
   const [filters, setFilters] = useState<Filters>({ country: '', type: '', search: '', confirmedOnly: false, openNow: false });
   const [showAddModal, setShowAddModal] = useState(false);
   const [confirmTarget, setConfirmTarget] = useState<PlaceWithCount | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<PlaceWithCount | null>(null);
 
   const { t } = useTranslation(lang);
-  const { places, loading, error, addPlace, addConfirmation } = usePlaces(filters);
+  const { places, loading, error, addPlace, addConfirmation, addClaim } = usePlaces(filters);
   const countries = useCountries();
 
   const countryNames = countries.map((c) => c.code);
@@ -80,7 +82,7 @@ export function App() {
               </p>
             )}
 
-            <PlacesGrid places={places} loading={loading} t={t} onConfirm={setConfirmTarget} />
+            <PlacesGrid places={places} loading={loading} t={t} onConfirm={setConfirmTarget} onRemove={setRemoveTarget} />
           </div>
         </section>
 
@@ -126,6 +128,18 @@ export function App() {
           onSubmit={async (action, when) => {
             await addConfirmation(confirmTarget.id, action, when);
             setConfirmTarget(null);
+          }}
+        />
+      )}
+
+      {removeTarget !== null && (
+        <RemovePlaceModal
+          place={removeTarget}
+          t={t}
+          onClose={() => setRemoveTarget(null)}
+          onSubmit={async (reason) => {
+            await addClaim(removeTarget.id, reason);
+            setRemoveTarget(null);
           }}
         />
       )}

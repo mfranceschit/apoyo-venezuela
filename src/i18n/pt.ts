@@ -59,6 +59,7 @@ export const pt = {
     unconfirmed: 'Sem confirmação',
     unconfirmedHint: 'seja o primeiro',
     confirm: 'Confirmar',
+    remove: 'Denunciar',
   },
   section: {
     title: 'Locais',
@@ -116,6 +117,18 @@ export const pt = {
       'volunteered': 'Fui voluntário',
       'visited and still active': 'Visitei e ainda está ativo',
     } as Record<string, string>,
+  },
+  removeModal: {
+    title: 'Denunciar este local',
+    reason: 'Motivo',
+    reasons: {
+      suspicious_activity: 'Atividade suspeita',
+      permanently_closed: 'Fechado permanentemente',
+      incorrect_data: 'Dados incorretos',
+    } as Record<string, string>,
+    disclaimer: 'Qualquer pessoa pode enviar uma denúncia. Se um local acumular 3 denúncias, será removido da listagem.',
+    submit: 'Enviar denúncia',
+    cancel: 'Cancelar',
   },
   loading: 'Carregando locais...',
   empty: 'Nada por aqui ainda',
