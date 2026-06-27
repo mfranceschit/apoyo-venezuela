@@ -9,6 +9,7 @@ import { ConfirmModal } from './components/ConfirmModal';
 import { usePlaces } from './hooks/usePlaces';
 import { useCountries } from './hooks/useCountries';
 import { useTranslation } from './hooks/useTranslation';
+import { formatTimezone } from './lib/hours';
 
 const LANGS: Lang[] = ['es', 'en', 'pt'];
 
@@ -21,6 +22,12 @@ export function App() {
   const { t } = useTranslation(lang);
   const { places, loading, error, addPlace, addConfirmation } = usePlaces(filters);
   const countries = useCountries();
+
+  const countryNames = countries.map((c) => c.code);
+  const selectedTimezone =
+    filters.openNow && filters.country
+      ? (countries.find((c) => c.code === filters.country)?.timezone ?? null)
+      : null;
 
   return (
     <>
@@ -58,9 +65,14 @@ export function App() {
               <span className="font-mono text-xs text-ink/45">
                 {t.section.results(places.length)}
               </span>
+              {selectedTimezone && (
+                <span className="ml-auto font-mono text-xs text-ink/45">
+                  🕐 {formatTimezone(selectedTimezone)}
+                </span>
+              )}
             </div>
 
-            <FilterBar filters={filters} onChange={setFilters} t={t} countries={countries} />
+            <FilterBar filters={filters} onChange={setFilters} t={t} countries={countryNames} />
 
             {error && (
               <p className="bg-terracotta/10 border border-terracotta text-terracotta px-4 py-3 rounded-lg text-sm mb-5">
@@ -97,7 +109,7 @@ export function App() {
       {showAddModal && (
         <AddPlaceModal
           t={t}
-          countries={countries}
+          countries={countryNames}
           onClose={() => setShowAddModal(false)}
           onSubmit={async (place) => {
             await addPlace(place);
