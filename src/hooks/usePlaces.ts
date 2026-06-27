@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { SEED_PLACES } from '../data/seed';
 import { isOpenNow } from '../lib/hours';
-import type { Place, Confirmation, PlaceWithCount, Filters, Action, CountryInfo } from '../types';
+import type { Place, Confirmation, PlaceWithCount, Filters, Action, CountryInfo, ClaimReason } from '../types';
 
 /** Lowercase and strip accents so "espana" matches "España". */
 function normalize(text: string): string {
@@ -29,8 +29,8 @@ export function filterPlaces(places: PlaceWithCount[], filters: Filters): PlaceW
 
 async function fetchAllPlaces(): Promise<PlaceWithCount[]> {
   const { data: places, error: placesError } = await supabase
-    .from('places')
-    .select('*, countries(timezone)')
+    .from('active_places')
+    .select('*')
     .order('created_at', { ascending: false });
   if (placesError) throw placesError;
 
@@ -41,7 +41,6 @@ async function fetchAllPlaces(): Promise<PlaceWithCount[]> {
 
   return (places ?? []).map((place) => ({
     ...place,
-    timezone: (place as { countries?: { timezone?: string | null } }).countries?.timezone ?? null,
     confirmations: (confirmations ?? []).filter(
       (c: Confirmation) => c.place_id === place.id,
     ),
@@ -54,6 +53,7 @@ interface UsePlacesResult {
   error: string | null;
   addPlace: (place: Omit<Place, 'id' | 'created_at' | 'timezone'>) => Promise<void>;
   addConfirmation: (placeId: string, action: Action, when: string) => Promise<void>;
+  addClaim: (placeId: string, reason: ClaimReason) => Promise<void>;
 }
 
 export function usePlaces(filters: Filters): UsePlacesResult {
@@ -114,6 +114,18 @@ export function usePlaces(filters: Filters): UsePlacesResult {
     },
   });
 
+  const addClaimMutation = useMutation({
+    mutationFn: async ({ placeId, reason }: { placeId: string; reason: ClaimReason }) => {
+      const { error } = await supabase
+        .from('place_claims')
+        .insert({ place_id: placeId, reason });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['places'] });
+    },
+  });
+
   return {
     places: filterPlaces(data, filters),
     loading: isLoading,
@@ -124,5 +136,6 @@ export function usePlaces(filters: Filters): UsePlacesResult {
     addConfirmation: async (placeId, action, when) => {
       await addConfirmationMutation.mutateAsync({ placeId, action, when });
     },
+    addClaim: async (placeId, reason) => { await addClaimMutation.mutateAsync({ placeId, reason }); },
   };
 }
