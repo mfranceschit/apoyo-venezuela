@@ -1,0 +1,10 @@
+project_id = "apoyo-venezuela"
+
+[functions.add-place]
+verify_jwt = false
+
+[functions.add-confirmation]
+verify_jwt = false
+
+[functions.report-place]
+verify_jwt = false

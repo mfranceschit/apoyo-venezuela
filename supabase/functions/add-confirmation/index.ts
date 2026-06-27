@@ -1,0 +1,47 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.0';
+import { enforceRateLimit } from '../_shared/rateLimit.ts';
+import { getClientIp, getUserAgent, handleOptions, jsonResponse } from '../_shared/http.ts';
+import { buildRateLimitKeys, normalizeAddConfirmationPayload } from '../_shared/validation.ts';
+
+Deno.serve(async (request) => {
+  const options = handleOptions(request);
+  if (options) return options;
+
+  if (request.method !== 'POST') return jsonResponse({ error: 'Method not allowed' }, 405);
+
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl || !serviceRoleKey) throw new Error('Function is not configured');
+
+    const payload = normalizeAddConfirmationPayload(await request.json());
+    const client = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+
+    const keys = await buildRateLimitKeys({
+      operation: 'add-confirmation',
+      ip: getClientIp(request),
+      userAgent: getUserAgent(request),
+      placeId: payload.placeId,
+    });
+
+    await enforceRateLimit(client, [
+      { key: keys[0], limit: 10, windowSeconds: 60 * 60 },
+      { key: keys[1], limit: 1, windowSeconds: 24 * 60 * 60 },
+    ]);
+
+    const { data, error } = await client
+      .from('confirmations')
+      .insert({ place_id: payload.placeId, action: payload.action, when: payload.when })
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return jsonResponse(data, 201);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unexpected error';
+    const status = message === 'Rate limit exceeded' ? 429 : 400;
+    return jsonResponse({ error: message }, status);
+  }
+});

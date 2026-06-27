@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { SEED_PLACES } from '../data/seed';
 import { isOpenNow } from '../lib/hours';
+import { addPlaceViaFunction, addConfirmationViaFunction, reportPlaceViaFunction } from '../lib/anonymousWrites';
 import type { Place, Confirmation, PlaceWithCount, Filters, Action, CountryInfo, ClaimReason } from '../types';
 
 /** Lowercase and strip accents so "espana" matches "España". */
@@ -66,15 +67,8 @@ export function usePlaces(filters: Filters): UsePlacesResult {
   });
 
   const addPlaceMutation = useMutation({
-    mutationFn: async (place: Omit<Place, 'id' | 'created_at' | 'timezone'>) => {
-      const { data: row, error } = await supabase
-        .from('places')
-        .insert(place)
-        .select()
-        .single();
-      if (error) throw error;
-      return row as Place;
-    },
+    mutationFn: async (place: Omit<Place, 'id' | 'created_at' | 'timezone'>) =>
+      addPlaceViaFunction(supabase, place),
     onSuccess: (newPlace) => {
       const countries = queryClient.getQueryData<CountryInfo[]>(['countries']) ?? [];
       const timezone = countries.find((c) => c.code === newPlace.country)?.timezone ?? null;
@@ -94,15 +88,7 @@ export function usePlaces(filters: Filters): UsePlacesResult {
       placeId: string;
       action: Action;
       when: string;
-    }) => {
-      const { data: row, error } = await supabase
-        .from('confirmations')
-        .insert({ place_id: placeId, action, when })
-        .select()
-        .single();
-      if (error) throw error;
-      return row as Confirmation;
-    },
+    }) => addConfirmationViaFunction(supabase, placeId, action, when),
     onSuccess: (newConfirmation) => {
       queryClient.setQueryData<PlaceWithCount[]>(['places'], (prev = []) =>
         prev.map((p) =>
@@ -115,12 +101,8 @@ export function usePlaces(filters: Filters): UsePlacesResult {
   });
 
   const addClaimMutation = useMutation({
-    mutationFn: async ({ placeId, reason }: { placeId: string; reason: ClaimReason }) => {
-      const { error } = await supabase
-        .from('place_claims')
-        .insert({ place_id: placeId, reason });
-      if (error) throw error;
-    },
+    mutationFn: async ({ placeId, reason }: { placeId: string; reason: ClaimReason }) =>
+      reportPlaceViaFunction(supabase, placeId, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['places'] });
     },
