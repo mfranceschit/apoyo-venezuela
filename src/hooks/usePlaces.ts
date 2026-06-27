@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { SEED_PLACES } from '../data/seed';
 import { isOpenNow } from '../lib/hours';
-import type { Place, Confirmation, PlaceWithCount, Filters, Action } from '../types';
+import type { Place, Confirmation, PlaceWithCount, Filters, Action, CountryInfo } from '../types';
 
 /** Lowercase and strip accents so "espana" matches "España". */
 function normalize(text: string): string {
@@ -76,8 +76,10 @@ export function usePlaces(filters: Filters): UsePlacesResult {
       return row as Place;
     },
     onSuccess: (newPlace) => {
+      const countries = queryClient.getQueryData<CountryInfo[]>(['countries']) ?? [];
+      const timezone = countries.find((c) => c.code === newPlace.country)?.timezone ?? null;
       queryClient.setQueryData<PlaceWithCount[]>(['places'], (prev = []) => [
-        { ...newPlace, confirmations: [] },
+        { ...newPlace, timezone, confirmations: [] },
         ...prev,
       ]);
     },
