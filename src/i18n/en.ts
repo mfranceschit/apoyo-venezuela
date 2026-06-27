@@ -117,6 +117,18 @@ export const en = {
       'visited and still active': 'I visited and it is still active',
     } as Record<string, string>,
   },
+  removeModal: {
+    title: 'Report this place',
+    reason: 'Reason',
+    reasons: {
+      suspicious_activity: 'Suspicious activity',
+      permanently_closed: 'Permanently closed',
+      incorrect_data: 'Incorrect information',
+    } as Record<string, string>,
+    disclaimer: 'Anyone can submit a report. If a place accumulates 3 reports, it will be removed from the listing.',
+    submit: 'Send report',
+    cancel: 'Cancel',
+  },
   loading: 'Loading locations...',
   empty: 'Nothing here yet',
   emptyHint: 'Be the first to add a place for this search.',

@@ -117,6 +117,18 @@ export const es = {
       'visited and still active': 'Lo visité y sigue activo',
     } as Record<string, string>,
   },
+  removeModal: {
+    title: 'Dar de baja este lugar',
+    reason: 'Motivo',
+    reasons: {
+      suspicious_activity: 'Actividad sospechosa',
+      permanently_closed: 'Cerrado permanentemente',
+      incorrect_data: 'Datos erróneos',
+    } as Record<string, string>,
+    disclaimer: 'Cualquier persona puede enviar un reporte. Si un lugar acumula 3 reportes, dejará de aparecer en el listado.',
+    submit: 'Enviar reporte',
+    cancel: 'Cancelar',
+  },
   loading: 'Cargando lugares...',
   empty: 'No hay nada por aquí todavía',
   emptyHint: 'Sé el primero en agregar un lugar para esta búsqueda.',

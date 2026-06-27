@@ -42,6 +42,15 @@ export interface PlaceWithCount extends Place {
   confirmations: Confirmation[];
 }
 
+export type ClaimReason = 'suspicious_activity' | 'permanently_closed' | 'incorrect_data';
+
+export interface PlaceClaim {
+  id: string;
+  place_id: string;
+  reason: ClaimReason;
+  created_at: string;
+}
+
 export interface Filters {
   country: string;
   type: PlaceType | '';
