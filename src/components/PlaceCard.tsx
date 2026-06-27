@@ -6,6 +6,7 @@ interface Props {
   place: PlaceWithCount;
   t: Translations;
   onConfirm: (place: PlaceWithCount) => void;
+  onRemove: (place: PlaceWithCount) => void;
 }
 
 /** Split a free-text address into a main line, extra lines, and a phone number. */
@@ -29,7 +30,7 @@ function formatScheduleLines(place: PlaceWithCount, t: Translations): string[] {
   });
 }
 
-export function PlaceCard({ place, t, onConfirm }: Props) {
+export function PlaceCard({ place, t, onConfirm, onRemove }: Props) {
   const count = place.confirmations.length;
   const open = isOpenNow(place);
   const scheduleLines = formatScheduleLines(place, t);
@@ -145,6 +146,14 @@ export function PlaceCard({ place, t, onConfirm }: Props) {
           {t.card.confirm}
         </button>
         </div>
+
+        <button
+          type="button"
+          className="text-xs text-ink/35 hover:text-ink/60 transition-colors cursor-pointer mx-auto"
+          onClick={() => onRemove(place)}
+        >
+          {t.card.remove}
+        </button>
       </div>
     </article>
   );

@@ -7,12 +7,13 @@ interface Props {
   loading: boolean;
   t: Translations;
   onConfirm: (place: PlaceWithCount) => void;
+  onRemove: (place: PlaceWithCount) => void;
 }
 
 const gridClass = 'grid grid-cols-[repeat(auto-fill,minmax(310px,1fr))] gap-5';
 const emptyClass = 'col-span-full text-center py-14 font-mono text-sm text-petroleum/55';
 
-export function PlacesGrid({ places, loading, t, onConfirm }: Props) {
+export function PlacesGrid({ places, loading, t, onConfirm, onRemove }: Props) {
   if (loading) {
     return (
       <div className={gridClass}>
@@ -33,7 +34,7 @@ export function PlacesGrid({ places, loading, t, onConfirm }: Props) {
   return (
     <div className={gridClass}>
       {places.map((place) => (
-        <PlaceCard key={place.id} place={place} t={t} onConfirm={onConfirm} />
+        <PlaceCard key={place.id} place={place} t={t} onConfirm={onConfirm} onRemove={onRemove} />
       ))}
     </div>
   );

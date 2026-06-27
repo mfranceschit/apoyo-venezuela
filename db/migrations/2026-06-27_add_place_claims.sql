@@ -7,6 +7,20 @@ create table public.place_claims (
   created_at  timestamptz not null default now()
 );
 
+alter table public.place_claims enable row level security;
+
+create policy "anon can read place_claims"
+  on public.place_claims
+  for select
+  to anon
+  using (true);
+
+create policy "anon can insert place_claims"
+  on public.place_claims
+  for insert
+  to anon
+  with check (true);
+
 create view public.active_places as
   select * from public.places
   where id not in (
@@ -14,3 +28,5 @@ create view public.active_places as
     group by place_id
     having count(*) >= 3
   );
+
+grant select on public.active_places to anon;
