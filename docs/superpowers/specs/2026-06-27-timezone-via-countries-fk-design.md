@@ -8,9 +8,11 @@ status: approved
 
 `isOpenNow` evaluates whether a place is currently open using a hardcoded `COUNTRY_TZ` map in `src/lib/hours.ts`. This map only covers 12 countries; any other country silently falls back to `America/Caracas`, producing incorrect open/closed badges for places in, say, Germany or Portugal.
 
+Additionally, when the "Abierto ahora" filter is active with a specific country selected, the user has no indication of which timezone is being used for the open/closed evaluation.
+
 ## Goal
 
-Store IANA timezone strings in the `countries` table and resolve a place's timezone via a proper FK relationship — eliminating the hardcoded map and making it trivially correct for every country.
+Store IANA timezone strings in the `countries` table and resolve a place's timezone via a proper FK relationship — eliminating the hardcoded map and making it trivially correct for every country. When "Abierto ahora" is active with a country selected, display the timezone in use next to the results count.
 
 ## Decision
 
@@ -19,6 +21,9 @@ Store IANA timezone strings in the `countries` table and resolve a place's timez
 - Fetch timezone alongside places using Supabase's nested select (`countries(timezone)`)
 - Add `timezone: string | null` to the `Place` type
 - When `place.timezone` is null, `isOpenNow` returns `null` (no badge shown) — same as when hours are missing
+- Update `useCountries` to return `{ code: string; timezone: string | null }[]` so the timezone for the selected country filter is accessible
+- When "Abierto ahora" is active and a specific country is selected, show a human-readable timezone label at the right end of the "Lugares X resultados" header row
+- When "Abierto ahora" is active but country is "Todos", no label is shown (each place uses its own timezone)
 
 ## Database Migration (`db/migrations/2026-06-27_add_timezone_to_countries.sql`)
 
@@ -90,6 +95,46 @@ export function isOpenNow(place: Place, now: Date = new Date()): boolean | null 
 
 Add `timezone: null` to each entry in `SEED_PLACES` (seed data is shown when DB is unavailable; no open/closed badge is acceptable in that state).
 
+### `src/hooks/useCountries.ts`
+
+Change return type to `{ code: string; timezone: string | null }[]` and update the select to include `timezone`:
+
+```ts
+supabase.from('countries').select('code, timezone').eq('active', true).order('sort_order')
+```
+
+Update `FALLBACK_COUNTRIES` to match the new shape (all `timezone: null`). Callers that only need the name will use `.code`.
+
+### `src/lib/hours.ts` — new export `formatTimezone`
+
+Add a small helper that converts an IANA string to a human-readable Spanish label using `Intl.DateTimeFormat`:
+
+```ts
+export function formatTimezone(tz: string): string {
+  return new Intl.DateTimeFormat('es', { timeZoneName: 'long', timeZone: tz })
+    .formatToParts(new Date())
+    .find((p) => p.type === 'timeZoneName')?.value ?? tz;
+}
+```
+
+Example output: `"hora estándar de Venezuela"`, `"hora de Europa central"`.
+
+### `src/components/PlacesGrid.tsx` (or wherever the "Lugares X resultados" header is rendered)
+
+When `filters.openNow === true && filters.country !== ''`, look up the timezone for `filters.country` from the countries list and render a right-aligned label:
+
+```tsx
+<span className="text-sm text-ink/45 font-mono">
+  🕐 {formatTimezone(countryTimezone)}
+</span>
+```
+
+The label sits on the same row as "Lugares X resultados", right-aligned.
+
+### Callers of `useCountries`
+
+`Filters.tsx` and `AddPlaceModal.tsx` currently map over the `string[]`. After the change they map over `{ code, timezone }[]` and use `.code` for display and value.
+
 ## Files Touched
 
 | File | Change |
@@ -97,11 +142,14 @@ Add `timezone: null` to each entry in `SEED_PLACES` (seed data is shown when DB 
 | `db/migrations/2026-06-27_add_timezone_to_countries.sql` | New migration |
 | `src/types/index.ts` | Add `timezone` field to `Place` |
 | `src/hooks/usePlaces.ts` | Nested select + flatten |
-| `src/lib/hours.ts` | Remove hardcoded map, update `isOpenNow` |
+| `src/hooks/useCountries.ts` | Return `{ code, timezone }[]`, select timezone |
+| `src/lib/hours.ts` | Remove hardcoded map, update `isOpenNow`, add `formatTimezone` |
 | `src/data/seed.ts` | Add `timezone: null` to each seed place |
+| `src/components/PlacesGrid.tsx` | Timezone label in header row |
+| `src/components/Filters.tsx` | Update to use `.code` from new shape |
+| `src/components/AddPlaceModal.tsx` | Update to use `.code` from new shape |
 
 ## Out of Scope
 
-- `useCountries` hook — not changed; it only returns country names for the filter dropdown
-- `AddPlaceModal` — no change; places are inserted with `country` as a string; FK enforces validity at DB level
-- i18n — no change
+- `AddPlaceModal` insert logic — no change; the FK enforces validity at DB level
+- i18n — `formatTimezone` produces its own localised string via `Intl`; no translation keys needed
