@@ -14,6 +14,7 @@ Deno.test('normalizeAddPlacePayload trims fields and keeps nullable optional val
     country: 'España',
     address: '  Calle 1 ',
     url: ' https://example.com/info ',
+    hours: { mon: ['09:00', '18:00'] },
   });
 
   assertEquals(payload, {
@@ -23,6 +24,7 @@ Deno.test('normalizeAddPlacePayload trims fields and keeps nullable optional val
     country: 'España',
     address: 'Calle 1',
     url: 'https://example.com/info',
+    hours: { mon: ['09:00', '18:00'] },
   });
 });
 
@@ -43,6 +45,18 @@ Deno.test('normalizeAddPlacePayload rejects invalid place type and unsafe url sc
     }),
     Error,
     'URL must start with http:// or https://',
+  );
+
+  assertThrows(
+    () => normalizeAddPlacePayload({
+      name: 'Centro',
+      type: 'collection',
+      city: 'Madrid',
+      country: 'España',
+      hours: { monday: ['09:00', '18:00'] },
+    }),
+    Error,
+    'Invalid hours day',
   );
 });
 
