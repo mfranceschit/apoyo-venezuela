@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import type { Filters, PlaceWithCount, Lang } from './types';
 import { Hero } from './components/Hero';
 import { WarningBanner } from './components/WarningBanner';
@@ -143,6 +144,8 @@ export function App() {
           }}
         />
       )}
+
+      <Analytics />
     </>
   );
 }
