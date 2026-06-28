@@ -2,6 +2,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.0';
 import { enforceRateLimit } from '../_shared/rateLimit.ts';
 import { getClientIp, getUserAgent, handleOptions, jsonResponse } from '../_shared/http.ts';
 import { buildRateLimitKeys, normalizeReportPlacePayload } from '../_shared/validation.ts';
+import {
+  REPORT_PLACE_GLOBAL_RATE_LIMIT,
+  REPORT_PLACE_PER_PLACE_RATE_LIMIT,
+} from '../_shared/rateLimitRules.ts';
 
 Deno.serve(async (request) => {
   const options = handleOptions(request);
@@ -27,8 +31,8 @@ Deno.serve(async (request) => {
     });
 
     await enforceRateLimit(client, [
-      { key: keys[0], limit: 5, windowSeconds: 60 * 60 },
-      { key: keys[1], limit: 1, windowSeconds: 24 * 60 * 60 },
+      { key: keys[0], ...REPORT_PLACE_GLOBAL_RATE_LIMIT },
+      { key: keys[1], ...REPORT_PLACE_PER_PLACE_RATE_LIMIT },
     ]);
 
     const { data, error } = await client
