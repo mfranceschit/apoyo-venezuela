@@ -19,6 +19,6 @@ export const REPORT_PLACE_GLOBAL_RATE_LIMIT = {
 } as const;
 
 export const REPORT_PLACE_PER_PLACE_RATE_LIMIT = {
-  limit: 1,
+  limit: 3,
   windowSeconds: 24 * 60 * 60,
 } as const;
